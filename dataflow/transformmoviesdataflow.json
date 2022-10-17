@@ -1,0 +1,64 @@
+{
+	"name": "transformmoviesdataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSql_Table",
+						"type": "DatasetReference"
+					},
+					"name": "MoviesDB"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlAggTable",
+						"type": "DatasetReference"
+					},
+					"name": "Sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FilterYears"
+				},
+				{
+					"name": "AggregateComedyRating"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          movie as string,",
+				"          title as string,",
+				"          genre as string,",
+				"          release_year as string,",
+				"          rating as string,",
+				"          rotten_tomato as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     limit: 1000,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> MoviesDB",
+				"MoviesDB filter(toInteger(release_year) >= 1910 && toInteger(release_year) <= 2000  &&  rlike(genre, 'Comedy')) ~> FilterYears",
+				"FilterYears aggregate(groupBy(year = release_year),",
+				"     AverageComedyRating = toDecimal(avg(toInteger(rating)))) ~> AggregateComedyRating",
+				"AggregateComedyRating sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     partitionBy('hash', 1)) ~> Sink"
+			]
+		}
+	}
+}

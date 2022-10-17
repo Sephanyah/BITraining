@@ -1,0 +1,9 @@
+{
+	"name": "adf-bi-training",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "20769d6d-f9d2-451a-9efa-598b1c5269de",
+		"tenantId": "68b1ca73-ef70-4ee5-b2ca-de36e116a17c"
+	}
+}
