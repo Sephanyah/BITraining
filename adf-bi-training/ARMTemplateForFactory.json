@@ -434,7 +434,6 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     inferDriftedColumnTypes: true,",
-						"     limit: 0,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> MoviesDB",
 						"MoviesDB filter(toInteger(release_year) >= 1910 && toInteger(release_year) <= 2000  &&  rlike(genre, 'Comedy')) ~> FilterYears",
